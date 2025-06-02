@@ -1,14 +1,23 @@
 package models
 
+/*
+
+	This model will contain the dimensions for a customer
+	This will be helpful when we store several customers in a database
+	Fields are set as pointers because they can be null
+*/
+
 type Dimension struct {
-	CustomerId int `json:"customer_id"`
-	Shoulder   int `json:"shoulder"`
-	UpperChest int `json:"upper_chest"`
-	Chest      int `json:"chest"`
-	Waist      int `json:"waist"`
-	Hip        int `json:"hip"`
-	Sleeves    int `json:"sleeves"`
-	NeckFront  int `json:"neck_front"`
-	NeckBack   int `json:"neck_back"`
-	Armhole    int `json:"armhole"`
+	CustomerId int      `json:"customer_id"`
+	Length     *float32 `json:"length,omitempty"`
+	Shoulder   *float32 `json:"shoulder,omitempty"`
+	UpperChest *float32 `json:"upper_chest,omitempty"`
+	Chest      *float32 `json:"chest,omitempty"`
+	Waist      *float32 `json:"waist,omitempty"`
+	Hip        *float32 `json:"hip,omitempty"`
+	Sleeves    *float32 `json:"sleeves,omitempty"`
+	NeckFront  *float32 `json:"neck_front,omitempty"`
+	NeckBack   *float32 `json:"neck_back,omitempty"`
+	Armhole    *float32 `json:"armhole,omitempty"`
+	Bottom     *float32 `json:"bottom,omitempty"`
 }
