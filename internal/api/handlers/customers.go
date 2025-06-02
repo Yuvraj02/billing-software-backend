@@ -26,6 +26,7 @@ func GetCustomerByID(w http.ResponseWriter, r *http.Request) {
 
 	idStr := r.PathValue("id")
 	id, err := strconv.Atoi(idStr)
+
 	if err != nil {
 		log.Fatalln("Error Parsing String to int")
 	}
@@ -33,7 +34,6 @@ func GetCustomerByID(w http.ResponseWriter, r *http.Request) {
 	customerData := customersMap[id]
 
 	w.Header().Set("Content-Type", "application/json")
-
 	json.NewEncoder(w).Encode(customerData)
 
 }

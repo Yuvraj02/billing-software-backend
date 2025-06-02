@@ -8,17 +8,18 @@ package models
 
 */
 
-
 type Category struct {
-	CategoryId   int    `json:"category_id"`
-	CategoryName string `json:"category_name"`
-	Shoulder    *string   `json:"shoulder,omitempty"`
-	UpperChest  *string   `json:"upper_chest,omitempty"`
-	Chest       *string   `json:"chest,omitempty"`
-	Waist       *string   `json:"waist,omitempty"`
-	Hip         *string   `json:"hip,omitempty"`
-	Sleeves     *string   `json:"sleeves,omitempty"`
-	NeckFront   *string   `json:"neck_front,omitempty"`
-	NeckBack    *string   `json:"neck_back,omitempty"`
-	Armhole     *string   `json:"armhole,omitempty"`
+	CategoryId   int     `json:"category_id"`
+	CategoryName string  `json:"category_name"`
+	Shoulder     *string `json:"shoulder,omitempty"`
+	UpperChest   *string `json:"upper_chest,omitempty"`
+	Chest        *string `json:"chest,omitempty"`
+	Waist        *string `json:"waist,omitempty"`
+	Hip          *string `json:"hip,omitempty"`
+	Sleeves      *string `json:"sleeves,omitempty"`
+	NeckFront    *string `json:"neck_front,omitempty"`
+	NeckBack     *string `json:"neck_back,omitempty"`
+	Armhole      *string `json:"armhole,omitempty"`
+	Length       *string `json:"length,omitempty"`
+	Bottom       *string `json:"bottom,omitempty"`
 }
