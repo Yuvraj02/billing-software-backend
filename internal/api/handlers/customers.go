@@ -109,3 +109,31 @@ func AddCustomer(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 
 }
+
+func GetCustomerByPhone(w http.ResponseWriter, r *http.Request){
+	
+
+	customerPhone := r.PathValue("phone")
+
+	query := `SELECT id,name,email,phone,userid,address FROM customers WHERE phone = $1`
+	row := sqlconnect.Dbpool.QueryRow(context.Background(),query,customerPhone)
+
+	var customer models.Customer
+	err := row.Scan(&customer.Id, &customer.Name, &customer.Email, &customer.Phone, &customer.UserID, &customer.Address)
+	if err!=nil{
+		http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
+		return
+	}
+
+	response := struct {
+		Status string `json:"search_status"`
+		Data models.Customer `json:"searched_data"`
+	}{
+		Status: "success",
+		Data:customer,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+
+}

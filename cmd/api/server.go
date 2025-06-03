@@ -15,7 +15,7 @@ func main() {
 	// fmt.Println("Working")
 	err := godotenv.Load()
 	if err!= nil {
-		fmt.Println("Error in Loading .ENV File")
+		fmt.Printf("%s\n",err)
 		return
 	}
 

@@ -12,6 +12,7 @@ func Router() *http.ServeMux{
 	//All GET routes
 	mux.HandleFunc("GET /", handlers.GetCustomers)
 	mux.HandleFunc("GET /{id}", handlers.GetCustomerByID)
+	mux.HandleFunc("GET /customers/{phone}",handlers.GetCustomerByPhone)
 	mux.HandleFunc("GET /dim/{id}", handlers.GetDimensionsByID)
 	mux.HandleFunc("GET /categories", handlers.GetCategories)
 	
