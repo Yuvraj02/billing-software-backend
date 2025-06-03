@@ -8,7 +8,7 @@ package models
 */
 
 type Dimension struct {
-	CustomerId int      `json:"customer_id"`
+	CustomerId int      `json:"customer_id"` //This is going to be Foreign Key Referencing Customers Table
 	Length     *float32 `json:"length,omitempty"`
 	Shoulder   *float32 `json:"shoulder,omitempty"`
 	UpperChest *float32 `json:"upper_chest,omitempty"`
