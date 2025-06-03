@@ -3,36 +3,29 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"restapi/billing-backend/internal/api/router"
+	"restapi/billing-backend/internal/repository/sqlconnect"
+
+	"github.com/joho/godotenv"
 )
-
-
-// func userHandler(w http.ResponseWriter, r *http.Request){
-	
-// 	idStr := r.PathValue("id")
-// 	id,err := strconv.Atoi(idStr)
-// 	if err != nil{
-// 		fmt.Println("Error in converting id to int")
-// 		return
-// 	}
-
-// 	response := struct {
-// 		Status string `json:"status"`
-// 		Data models.User `json:"data"`
-// 	}{
-// 		Status: "success",
-// 		Data: initialMap[id],
-// 		}
-// 	w.Header().Set("Content-Type", "application/json")
-// 	json.NewEncoder(w).Encode(response)
-
-// }
 
 func main() {
 
 	// fmt.Println("Working")
-	port := ":3000"
+	err := godotenv.Load()
+	if err!= nil {
+		fmt.Println("Error in Loading .ENV File")
+		return
+	}
 
+	err = sqlconnect.ConnectDB()
+	if err!=nil{
+		fmt.Printf("%s", err)
+		return
+	}
+
+	port := os.Getenv("API_PORT")
 
 	// http.HandleFunc("GET /", rootHandler)
 	// http.HandleFunc("GET /{id}", userHandler)

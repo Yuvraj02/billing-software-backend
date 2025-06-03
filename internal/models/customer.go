@@ -8,3 +8,4 @@ type Customer struct {
 	UserID  int     `json:"user_id"`
 	Address *string `json:"customer_address"`
 }
+
