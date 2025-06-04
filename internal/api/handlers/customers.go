@@ -91,7 +91,7 @@ func AddCustomer(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	//User query row here because we will send back the data with ID as response 
+	//User query row here because we will send back the data with new ID as response 
 
 	query := `INSERT INTO customers (id,name,email,phone,userid,address) VALUES (DEFAULT, $1,$2,$3,$4,$5)`
 	_,err := sqlconnect.Dbpool.Exec(context.Background(), query,newCustomer.Name, newCustomer.Email, newCustomer.Phone, newCustomer.UserID, newCustomer.Address)
