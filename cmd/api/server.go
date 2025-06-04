@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"restapi/billing-backend/internal/api/middlewares"
 	"restapi/billing-backend/internal/api/router"
 	"restapi/billing-backend/internal/repository/sqlconnect"
 
@@ -33,6 +34,6 @@ func main() {
 	fmt.Println("Server Running on port", port)
 
 	routerMux := router.Router()
-
-	http.ListenAndServe(port,routerMux)
+	cors := middlewares.Cors(routerMux)
+	http.ListenAndServe(port,cors)
 }

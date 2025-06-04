@@ -13,10 +13,9 @@ func Router() *http.ServeMux{
 	mux.HandleFunc("GET /", handlers.GetCustomers)
 	mux.HandleFunc("GET /{id}", handlers.GetCustomerByID)
 	mux.HandleFunc("GET /customers/{phone}",handlers.GetCustomerByPhone)
-	mux.HandleFunc("GET /dim/{id}", handlers.GetDimensionsByID)
+	mux.HandleFunc("GET /dim/{phone}", handlers.GetDimensionsByPhone)
 	mux.HandleFunc("GET /categories", handlers.GetCategories)
 	
-
 	//All POST routes
 	mux.HandleFunc("POST /add_customer", handlers.AddCustomer)
 	mux.HandleFunc("POST /add_dim", handlers.AddDimension)
