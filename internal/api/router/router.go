@@ -22,6 +22,6 @@ func Router() *http.ServeMux{
 	mux.HandleFunc("POST /add_category", handlers.AddCategory)
 
 	//All Patch routes
-	mux.HandleFunc("PATCH /update_dim/{id}/", handlers.PatchDimensions)
+	mux.HandleFunc("PATCH /update_dim/{id}", handlers.PatchDimensions)
 	return mux 
 }

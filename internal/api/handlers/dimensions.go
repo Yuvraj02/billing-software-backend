@@ -58,8 +58,8 @@ func AddDimension(w http.ResponseWriter, r *http.Request) {
 	var newDimensions models.Dimension
 	json.NewDecoder(r.Body).Decode(&newDimensions)
 
-	query := `INSERT INTO dimensions (customer_id, shoulder, upper_chest, chest, waist, hip, sleeves, neck_front, neck_back, armhole, length, bottom) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`
-	_, err := sqlconnect.Dbpool.Exec(context.Background(), query, &newDimensions.CustomerId, &newDimensions.Shoulder, &newDimensions.UpperChest, &newDimensions.Chest, &newDimensions.Waist, &newDimensions.Hip, &newDimensions.Sleeves, &newDimensions.NeckFront, &newDimensions.NeckBack, &newDimensions.Armhole, &newDimensions.Length, &newDimensions.Bottom)
+	query := `INSERT INTO dimensions (customer_id, customer_name, customer_phone, shoulder, upper_chest, chest, waist, hip, sleeves, neck_front, neck_back, armhole, length, bottom) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)`
+	_, err := sqlconnect.Dbpool.Exec(context.Background(), query, &newDimensions.CustomerId, &newDimensions.CustomerName, &newDimensions.CustomerPhone, &newDimensions.Shoulder, &newDimensions.UpperChest, &newDimensions.Chest, &newDimensions.Waist, &newDimensions.Hip, &newDimensions.Sleeves, &newDimensions.NeckFront, &newDimensions.NeckBack, &newDimensions.Armhole, &newDimensions.Length, &newDimensions.Bottom)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("%s/n", err), http.StatusInternalServerError)
 		return

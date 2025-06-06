@@ -93,13 +93,14 @@ func AddCustomer(w http.ResponseWriter, r *http.Request) {
 
 	//User query row here because we will send back the data with new ID as response 
 
-	query := `INSERT INTO customers (id,name,email,phone,userid,address) VALUES (DEFAULT, $1,$2,$3,$4,$5)`
-	_,err := sqlconnect.Dbpool.Exec(context.Background(), query,newCustomer.Name, newCustomer.Email, newCustomer.Phone, newCustomer.UserID, newCustomer.Address)
+	query := `INSERT INTO customers (id,name,email,phone,userid,address) VALUES (DEFAULT, $1,$2,$3,$4,$5)  RETURNING id, name, email, phone, userid, address`
+	row := sqlconnect.Dbpool.QueryRow(context.Background(), query,&newCustomer.Name, &newCustomer.Email, &newCustomer.Phone, &newCustomer.UserID, &newCustomer.Address)
+	row.Scan(&newCustomer.Id, &newCustomer.Name,&newCustomer.Email, &newCustomer.Phone, &newCustomer.UserID, &newCustomer.Address)
 
-	if err!=nil{
-		http.Error(w, "Error in inserting cutomer to database", http.StatusInternalServerError)
-		return
-	}
+	// if err!=nil{
+	// 	http.Error(w, "Error in inserting cutomer to database", http.StatusInternalServerError)
+	// 	return
+	// }
 
 	response := struct {
 		Status string `json:"status"`
@@ -125,6 +126,11 @@ func GetCustomerByPhone(w http.ResponseWriter, r *http.Request){
 	var customer models.Customer
 	err := row.Scan(&customer.Id, &customer.Name, &customer.Email, &customer.Phone, &customer.UserID, &customer.Address)
 	if err!=nil{
+		if err==pgx.ErrNoRows{
+			http.Error(w,"No customer found by the phone number",http.StatusNotFound)
+			return
+		}
+		
 		http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 		return
 	}

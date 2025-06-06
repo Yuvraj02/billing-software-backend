@@ -8,8 +8,8 @@ package models
 */
 
 type Dimension struct {
-	CustomerId    int      `json:"customer_id"` //This is going to be Foreign Key Referencing Customers Table
-	CustomerName  string 	`json:"customer_name"` //Needed because it is possible that there are multiple customers on same phone number
+	CustomerId    int      `json:"customer_id"`   //This is going to be Foreign Key Referencing Customers Table
+	CustomerName  string   `json:"customer_name"` //Needed because it is possible that there are multiple customers on same phone number
 	CustomerPhone string   `json:"customer_phone"`
 	Length        *float32 `json:"length,omitempty"`
 	Shoulder      *float32 `json:"shoulder,omitempty"`
