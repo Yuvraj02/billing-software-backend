@@ -13,7 +13,7 @@ import (
 
 func main() {
 
-	// fmt.Println("Working")
+
 	err := godotenv.Load()
 	if err!= nil {
 		fmt.Printf("%s\n",err)
@@ -27,9 +27,6 @@ func main() {
 	}
 
 	port := os.Getenv("API_PORT")
-
-	// http.HandleFunc("GET /", rootHandler)
-	// http.HandleFunc("GET /{id}", userHandler)
 
 	fmt.Println("Server Running on port", port)
 
