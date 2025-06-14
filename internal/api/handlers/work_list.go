@@ -137,7 +137,7 @@ func GetPendingWorkByPhone(w http.ResponseWriter, r *http.Request){
 	}
 
 	response := struct {
-		Status string `json: "sucess"`
+		Status string `json:"sucess"`
 		Data []models.WorkModel `json:"data"`
 	}{
 		Status: "success",
