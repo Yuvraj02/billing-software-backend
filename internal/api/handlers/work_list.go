@@ -13,6 +13,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 )
 
@@ -251,7 +253,9 @@ func AddWork(w http.ResponseWriter, r *http.Request) {
 				queryArgs = append(queryArgs, targetField.Int())
 			} else if targetField.Kind() == reflect.String {
 				queryArgs = append(queryArgs, targetField.String())
-			} else {
+			} else if targetField.Kind() == reflect.Array{
+				queryArgs = append(queryArgs, targetField.Interface().(uuid.UUID))
+			}else{
 				queryArgs = append(queryArgs, targetField.Interface().(time.Time))
 			}
 		}
@@ -263,7 +267,7 @@ func AddWork(w http.ResponseWriter, r *http.Request) {
 	db_cols += ")"
 
 	query += db_cols + ` VALUES ` + values
-	fmt.Println(queryArgs...)
+	// fmt.Println(queryArgs...)
 
 	_, err := sqlconnect.Dbpool.Exec(context.Background(), query, queryArgs...)
 	if err != nil {

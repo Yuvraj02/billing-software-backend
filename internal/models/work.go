@@ -7,7 +7,7 @@ import (
 )
 
 type WorkModel struct {
-	WorkId        uuid.UUID    `json:"work_id" db:"work_id"`
+	WorkId        uuid.UUID   `json:"work_id" db:"work_id"`
 	CustomerId    int       `json:"customer_id" db:"customer_id"`     //This is going to be Foreign Key Referencing Customers Table
 	CustomerName  string    `json:"customer_name" db:"customer_name"` //Needed because it is possible that there are multiple customers on same phone number
 	CustomerEmail *string   `json:"customer_email,omitempty" db:"customer_email,omitempty"`
