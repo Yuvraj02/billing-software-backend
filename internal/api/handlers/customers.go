@@ -65,6 +65,7 @@ func GetCustomerByID(w http.ResponseWriter, r *http.Request) {
 	row := sqlconnect.Dbpool.QueryRow(context.Background(), query,id)
 
 	var customer models.Customer
+	
 	err = row.Scan(&customer.Id,&customer.Name,&customer.Email,&customer.Phone, &customer.UserID, &customer.Address)
 	if err!=nil{
 		http.Error(w,fmt.Sprintf("%s",err), http.StatusInternalServerError)

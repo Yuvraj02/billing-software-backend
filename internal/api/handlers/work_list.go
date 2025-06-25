@@ -46,7 +46,7 @@ func GetPendingWork(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	query += " FROM worklist WHERE work_status = 'Pending'"
+	query += " FROM worklist WHERE work_status = 'Pending' ORDER BY date DESC"
 
 	rows, err := sqlconnect.Dbpool.Query(context.Background(), query)
 	if err != nil {
@@ -72,6 +72,59 @@ func GetPendingWork(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
+}
+
+func GetPendingWorkByName(w http.ResponseWriter, r *http.Request){
+
+	nameStr := r.PathValue("name")
+
+	//`SELECT * FROM worklist WHERE customer_name = nameStr`
+
+		query := `SELECT `
+		db_cols := ""
+		
+		var workModel models.WorkModel
+
+		workModelRefVal := reflect.ValueOf(&workModel).Elem()
+		workModelRefType := workModelRefVal.Type()
+
+		for i:=0; i<workModelRefType.NumField(); i++ {
+
+			dbTag := workModelRefType.Field(i).Tag.Get("db")
+			dbTag = strings.Split(dbTag,",")[0]
+			// fmt.Println(dbTag)
+			db_cols += dbTag
+
+			if(i!=workModelRefType.NumField()-1){
+				db_cols += ", "
+			}
+		}
+
+		// fmt.Println(db_cols)
+		query += db_cols + ` FROM worklist WHERE customer_name = $1 AND work_status = 'Pending'`
+		
+		rows, err := sqlconnect.Dbpool.Query(context.Background(), query, nameStr)
+		if err!=nil{
+			fmt.Println(fmt.Sprintf("%s", err))
+			return
+		}
+		
+		workList, err := pgx.CollectRows(rows,pgx.RowToAddrOfStructByPos[models.WorkModel])
+		if err!=nil{
+			fmt.Println(err)
+			return
+		}
+
+		response := struct {
+			Status string `json:"status"`
+			Data []*models.WorkModel `json:"data"`
+		}{
+			Status: "success",
+			Data: workList,
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(response)
 }
 
 func GetPendingWorkByPhone(w http.ResponseWriter, r *http.Request){
@@ -275,3 +328,181 @@ func AddWork(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func PatchWork(w http.ResponseWriter, r *http.Request){
+
+	idStr := r.PathValue("id")
+
+	query := `UPDATE worklist SET work_status = 'Completed' WHERE work_id = $1`
+
+	_, err := sqlconnect.Dbpool.Exec(context.Background(), query, idStr)
+
+	if err!=nil{
+		http.Error(w,fmt.Sprintf("%s",err), http.StatusInternalServerError)
+		return
+	}
+}
+
+func GetCompletedWork(w http.ResponseWriter, r *http.Request){
+
+	//get all db columns first using reflect package
+	var workModel models.WorkModel
+	//Now we create a reflect value of our work model struct
+	workModelRefVal := reflect.ValueOf(&workModel).Elem()
+	// fmt.Println(workValue)
+	workModelType := workModelRefVal.Type()
+
+	var db_columns []string
+
+	query := `SELECT `
+
+	for i := 0; i < workModelRefVal.NumField(); i++ {
+		// fmt.Println(workModelType.Field(i).Tag.Get("db"))
+
+		//Extract tag
+		db_tag := workModelType.Field(i).Tag.Get("db")
+		db_tag = strings.Split(db_tag, ",")[0]
+		//Append it to the db_column list
+		db_columns = append(db_columns, db_tag)
+
+		query += db_tag
+		if i != workModelType.NumField()-1 {
+			query += ", "
+		}
+	}
+
+	query += " FROM worklist WHERE work_status = 'Completed' ORDER BY date DESC"
+
+	rows, err := sqlconnect.Dbpool.Query(context.Background(), query)
+	if err != nil {
+		http.Error(w, "Worklist Query Problem", http.StatusInternalServerError)
+		return
+	}
+
+	workData, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByPos[models.WorkModel])
+	if err != nil {
+		http.Error(w, "Error in Collecting Work Rows", http.StatusInternalServerError)
+		return
+	}
+
+	response := struct {
+		Status string `json:"status"`
+		Count  int    `json:"count"`
+		Data   []*models.WorkModel `json:"data"`
+	}{
+		Status: "success",
+		Count:  len(workData),
+		Data:   workData,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+
+}
+
+func GetCompletedWorkByPhone(w http.ResponseWriter, r *http.Request){
+
+	phoneStr := r.PathValue("phone")
+
+	query:=`SELECT `
+
+	db_cols := ""
+
+	var workModel models.WorkModel
+	workModelRefVal := reflect.ValueOf(&workModel).Elem()
+	workModelRefType := workModelRefVal.Type()
+
+	for i:=0 ; i<workModelRefType.NumField(); i++ {
+
+		targetField := workModelRefType.Field(i)
+		targetFieldTag := targetField.Tag.Get("db")
+
+		targetFieldTag = strings.Split(targetFieldTag, ",")[0]
+
+		db_cols += targetFieldTag
+
+		if i!=workModelRefType.NumField()-1 {
+			db_cols += ", "
+		}
+		
+	}
+
+	query += db_cols + ` FROM worklist WHERE customer_phone = $1 AND work_status = 'Completed'`	
+
+	rows ,err := sqlconnect.Dbpool.Query(context.Background(), query, phoneStr)
+	if err!=nil{
+		fmt.Println(query)
+		fmt.Println(fmt.Sprintf("%s", err))
+		return
+	}
+
+	userList , err:= pgx.CollectRows(rows, pgx.RowToStructByPos[models.WorkModel])
+	if err!=nil{
+		fmt.Println(fmt.Sprintf("%s", err))
+		return
+	}
+
+	response := struct {
+		Status string `json:"sucess"`
+		Data []models.WorkModel `json:"data"`
+	}{
+		Status: "success",
+		Data: userList,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
+
+func GetCompletedWorkByName(w http.ResponseWriter, r *http.Request){
+
+	nameStr := r.PathValue("name")
+
+	//`SELECT * FROM worklist WHERE customer_name = nameStr`
+
+		query := `SELECT `
+		db_cols := ""
+		
+		var workModel models.WorkModel
+
+		workModelRefVal := reflect.ValueOf(&workModel).Elem()
+		workModelRefType := workModelRefVal.Type()
+
+		for i:=0; i<workModelRefType.NumField(); i++ {
+
+			dbTag := workModelRefType.Field(i).Tag.Get("db")
+			dbTag = strings.Split(dbTag,",")[0]
+			// fmt.Println(dbTag)
+			db_cols += dbTag
+
+			if(i!=workModelRefType.NumField()-1){
+				db_cols += ", "
+			}
+		}
+
+		query += db_cols + ` FROM worklist WHERE customer_name = $1 AND work_status = 'Completed'`
+		
+		rows, err := sqlconnect.Dbpool.Query(context.Background(), query, nameStr)
+		if err!=nil{
+			fmt.Println(fmt.Sprintf("%s", err))
+			return
+		}
+		
+		workList, err := pgx.CollectRows(rows,pgx.RowToAddrOfStructByPos[models.WorkModel])
+		if err!=nil{
+			fmt.Println(err)
+			return
+		}
+
+		response := struct {
+			Status string `json:"status"`
+			Data []*models.WorkModel `json:"data"`
+		}{
+			Status: "success",
+			Data: workList,
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(response)
+}
+
